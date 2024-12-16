@@ -1,0 +1,23 @@
+{
+  "name": "my-screeps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist && rollup --config rollup.config.js",
+    "deploy": "yarn build && node deploy.js"
+  },
+  "author": "Le Thanh Long [longlt201203@gmail.com]",
+  "license": "MIT",
+  "dependencies": {
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/screeps": "^3.3.8",
+    "dotenv": "^16.4.7",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.28.1",
+    "screeps-api": "^1.16.1",
+    "typescript": "^5.7.2"
+  }
+}
