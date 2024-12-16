@@ -7,17 +7,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist && rollup --config rollup.config.js",
-    "deploy": "yarn build && node deploy.js"
+    "deploy": "yarn build && node scripts/deploy.js",
+    "watch": "yarn build && node scripts/watch.js"
   },
   "author": "Le Thanh Long [longlt201203@gmail.com]",
   "license": "MIT",
   "dependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/screeps": "^3.3.8",
     "dotenv": "^16.4.7",
     "rimraf": "^6.0.1",
     "rollup": "^4.28.1",
     "screeps-api": "^1.16.1",
+    "tslib": "^2.8.1",
     "typescript": "^5.7.2"
   }
 }

@@ -4,15 +4,15 @@ import fs from "fs";
 
 config();
 
-async function main() {
-  const api = new ScreepsAPI({
-    token: process.env.AUTH_TOKEN,
-    protocol: "https",
-    hostname: "screeps.com",
-    port: 443,
-    path: "/",
-  });
+export const api = new ScreepsAPI({
+  token: process.env.AUTH_TOKEN,
+  protocol: "https",
+  hostname: "screeps.com",
+  port: 443,
+  path: "/",
+});
 
+export async function deploy() {
   const user = await api.me();
   console.log(`Auth successfully as ${user.username}`);
   const buffer = fs.readFileSync("dist/main.js");
@@ -22,4 +22,6 @@ async function main() {
   console.log("Deploy successfully!");
 }
 
-main();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  deploy();
+}
