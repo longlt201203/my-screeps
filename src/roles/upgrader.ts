@@ -1,3 +1,6 @@
+import { MY_VISUALIZE_PATH_STYLE } from "@utils/constants";
+import { isSourceSafe } from "@utils/source";
+
 export function runUpgrader(creep: Creep) {
   if (creep.memory.upgrading) {
     const controller = creep.room.controller;
@@ -6,22 +9,40 @@ export function runUpgrader(creep: Creep) {
     }
     const actionResult = creep.upgradeController(controller);
     if (actionResult == ERR_NOT_IN_RANGE) {
-      creep.moveTo(controller);
+      creep.moveTo(controller, {
+        visualizePathStyle: MY_VISUALIZE_PATH_STYLE,
+      });
     }
 
     if (creep.store[RESOURCE_ENERGY] == 0) {
       creep.memory.upgrading = false;
     }
   } else {
-    const spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
-    if (!spawn) {
+    if (!creep.memory.sourceId) return;
+    const source = Game.getObjectById(creep.memory.sourceId);
+    if (!source) {
       return;
     }
-    const actionResult = creep.withdraw(spawn, RESOURCE_ENERGY);
+    if (!isSourceSafe(source)) {
+      return;
+    }
+    const actionResult = creep.harvest(source);
     if (actionResult == ERR_NOT_IN_RANGE) {
-      creep.moveTo(spawn);
-    } else if (actionResult == OK || creep.store.getFreeCapacity() == 0) {
-      creep.memory.upgrading = true;
+      creep.moveTo(source, {
+        visualizePathStyle: MY_VISUALIZE_PATH_STYLE,
+      });
+    } else if (actionResult == OK) {
+      creep.say(
+        `${Math.round(
+          (creep.store[RESOURCE_ENERGY] /
+            creep.store.getCapacity(RESOURCE_ENERGY)) *
+            100
+        )}%`
+      );
+
+      if (creep.store.getFreeCapacity() == 0) {
+        creep.memory.upgrading = true;
+      }
     }
   }
 }

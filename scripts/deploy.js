@@ -13,10 +13,11 @@ export const api = new ScreepsAPI({
 });
 
 export async function deploy() {
+  const branch = process.argv[2] || "default";
   const user = await api.me();
   console.log(`Auth successfully as ${user.username}`);
   const buffer = fs.readFileSync("dist/main.js");
-  await api.code.set("default", {
+  await api.code.set(branch, {
     main: buffer.toString(),
   });
   console.log("Deploy successfully!");
