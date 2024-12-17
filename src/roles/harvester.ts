@@ -1,16 +1,35 @@
-export function runHarvester(creep: Creep) {
-  const sources = creep.room.find(FIND_SOURCES);
-  const source = sources[0];
+import { getAvailableSlots, isSourceSafe } from "@utils/source";
 
-  if (creep.store.getFreeCapacity() == 0) {
+function reset(creep: Creep) {
+  creep.memory.transfering = false;
+  creep.memory.sourceId = undefined;
+}
+
+export function runHarvester(creep: Creep) {
+  if (creep.memory.transfering) {
     const spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
     if (!spawn) return;
-    if (creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+    const actionResult = creep.transfer(spawn, RESOURCE_ENERGY);
+    if (actionResult == ERR_NOT_IN_RANGE) {
       creep.moveTo(spawn);
+    } else if (actionResult == OK) {
+      reset(creep);
     }
   } else {
-    if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+    let source = creep.memory.sourceId
+      ? Game.getObjectById(creep.memory.sourceId)
+      : creep.room
+          .find(FIND_SOURCES)
+          .find(
+            (source) => getAvailableSlots(source) > 0 && isSourceSafe(source)
+          );
+    if (!source) return;
+    creep.memory.sourceId = source.id;
+    const actionResult = creep.harvest(source);
+    if (actionResult == ERR_NOT_IN_RANGE) {
       creep.moveTo(source);
+    } else if (creep.store.getFreeCapacity() == 0) {
+      creep.memory.transfering = true;
     }
   }
 }

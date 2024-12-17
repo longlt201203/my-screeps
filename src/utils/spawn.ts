@@ -1,13 +1,14 @@
-import { ROLE_HARVESTER } from "./constants";
+import { WORKER_BODY } from "./constants";
+import { getTopPriorityJob } from "./room";
 
 export function runSpawn(spawn: StructureSpawn) {
   spawnCreep(spawn);
 }
 
 function spawnCreep(spawn: StructureSpawn) {
-  spawn.spawnCreep([WORK, MOVE, CARRY], `worker_${Game.time}`, {
+  spawn.spawnCreep(WORKER_BODY, `worker_${Game.time}`, {
     memory: {
-      role: ROLE_HARVESTER,
+      role: getTopPriorityJob(spawn.room),
     },
   });
 }
